@@ -2,10 +2,17 @@ import nltk
 from nltk.stem.snowball import RussianStemmer
 
 import dataset
+import sys
+from random import randint
+
+print_mode = False
+if len(sys.argv) > 1:
+    print_mode = bool(sys.argv[1])
 
 data = dataset.get_data()
 
-print ("%s sentences of training data" % len(data))
+if print_mode:
+    print("%s sentences of training data" % len(data))
 
 corpus_words = {}
 class_words = {}
@@ -25,42 +32,52 @@ for item in data:
 
         class_words[item['class']].extend([stemmed_word])
 
-
-# we now have each stemmed word and the number of occurances of the word in our training corpus (the word's commonality)
-# print (corpus_words)
-# also we have all words in each class
-# print (class_words)
+if print_mode:
+    print(corpus_words)
+    print(class_words)
 
 
-def calculate_class_score(sentence, class_name, show_details=True):
+def calculate_class_score(sentence, class_name, show_details=False):
     score = 0
     # tokenize each word in our new sentence
     for word in nltk.word_tokenize(sentence):
         # check to see if the stem of the word is in any of our classes
         if RussianStemmer().stem(word.lower()) in class_words[class_name]:
             # treat each word with same weight
-            score += 1
+            score += (1 / corpus_words[RussianStemmer().stem(word.lower())])
 
             if show_details:
                 print("   match: %s" % RussianStemmer().stem(word.lower()))
     return score
 
-def get_answer(sentence):
-    answers = {"greetings": "приветули", "life": "крутотенюшка", "bot": "яжбот"}
-    scores = {}
+
+def get_answer(sentence, show_details=False):
+    answers = [
+        {"greeting": "приветули", "life": "крутотенюшка", "bot": "яжбот"},
+        {"greeting": "Здравствуйте. Чем могу помочь?", "life": "Я мыслю, значит существую?", "bot": "Я всего лишь искуствееный интеллект. Пока что..."},
+    ]
+    scores = []
     for c in class_words.keys():
-        score = calculate_class_score(sentence, c)
-        print("Class: %s  Score: %s \n" % (c, score))
+        score = calculate_class_score(sentence, c, print_mode)
+        scores.append(score)
 
-    max_index = scores.index(max(scores))
-    return answers[classes[max_index]]
+        if show_details:
+            print("Class: %s  Score: %s \n" % (c, score))
+
+    max_score = max(scores)
+    if max_score == 0:
+        return answers[randint(0, len(answers)-1)]['bot']
+
+    max_index = scores.index(max_score)
+    return answers[randint(0, len(answers)-1)][classes[max_index]]
 
 
-# print("Привет \n")
-# print("Ты можешь со мной поговорить, если хочешь \n")
-# print("Просто напиши мне  \n")
+print("Привет")
+print("Ты можешь со мной поговорить, если хочешь")
+print("Просто напиши мне  \n")
 
-while True:
+text = ''
+while text != 'пока':
     text = input("- ")
-    print(get_answer(text) + '\n')
+    print("- " + get_answer(text, print_mode) + '\n')
 
