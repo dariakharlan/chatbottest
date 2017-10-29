@@ -66,7 +66,7 @@ def get_answer(sentence, show_details=False):
 
     max_score = max(scores)
     if max_score == 0:
-        return answers[randint(0, len(answers)-1)]['bot']
+        return 'я не понимать'
 
     max_index = scores.index(max_score)
     return answers[randint(0, len(answers)-1)][classes[max_index]]
@@ -76,6 +76,7 @@ print("Привет")
 print("Ты можешь со мной поговорить, если хочешь")
 print("Просто напиши мне  \n")
 
+print(RussianStemmer().stem('тюмени'))
 text = ''
 while text != 'пока':
     text = input("- ")

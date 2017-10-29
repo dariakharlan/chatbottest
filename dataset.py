@@ -47,4 +47,12 @@ def get_data():
         {"class": "bot", "sentence": "кто твои родители"},
         {"class": "bot", "sentence": "из какого ты города"},
         {"class": "bot", "sentence": "расскажи о себе"},
+
+        # price
+        {"class": "price", "sentence": "сколько стоит"},
+        {"class": "price", "sentence": "какая цена"},
+        {"class": "price", "sentence": "какая стоимость"},
+        {"class": "price", "sentence": "ценовая политика"},
+        {"class": "price", "sentence": "сколько нужно заплатить"},
+        {"class": "price", "sentence": "какая оплата"},
     ]
